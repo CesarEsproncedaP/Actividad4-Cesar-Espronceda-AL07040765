@@ -6,7 +6,7 @@ public class ArbolBinario {
      * @param id Es el número identificador del empleado, es como una matrícula. 
      * @param nombre Como se puede inferir, es para el nombre del empleado.
      */
-    void insertar(int id, String nombre) {
+    void insertar(String id, String nombre) {
         raíz = insertarRec(raíz, id, nombre);
     }
 
@@ -16,13 +16,13 @@ public class ArbolBinario {
      * @param nombre Es para el nombre del empleado.
      * @return Nodo nuevo.
      */
-    private Nodo insertarRec(Nodo nodo, int id, String nombre) {
+    private Nodo insertarRec(Nodo nodo, String id, String nombre) {
         if (nodo == null) {
             return new Nodo(id, nombre);
         }
-        if (id < nodo.id) {
+        if (id.compareTo(nodo.id) < 0) {
             nodo.izquierda = insertarRec(nodo.izquierda, id, nombre);
-        } else if (id > nodo.id) {
+        } else if (id.compareTo(nodo.id) > 0) {
             nodo.derecha = insertarRec(nodo.derecha, id, nombre);
         }
         return nodo;
@@ -32,7 +32,7 @@ public class ArbolBinario {
     * @param id Es el número identificador del empleado a buscar.
     * @return Cuando se encuebtra un empleado aparece su nombre, cuando no aparece "No encontrado".
     */
-    String buscar(int id) {
+    String buscar(String id) {
         Nodo resultado = buscarRec(raíz, id);
         return resultado != null ? resultado.nombre : "No encontrado";
     }
@@ -43,11 +43,11 @@ public class ArbolBinario {
      * @param id Es el numero identificador del empleado que se esta buscando.
      * @return Da de retorno el nodo encontrado o null en caso de que no se encuentre dicho ID.
      */
-    private Nodo buscarRec(Nodo nodo, int id) {
-        if (nodo == null || nodo.id == id) {
+    private Nodo buscarRec(Nodo nodo, String id) {
+        if (nodo == null || nodo.id.equals(id)) {
             return nodo;
         }
-        if (id < nodo.id) {
+        if (id.compareTo(nodo.id) < 0) {
             return buscarRec(nodo.izquierda, id);
         }
         return buscarRec(nodo.derecha, id);
@@ -57,7 +57,7 @@ public class ArbolBinario {
      * Elimina del árbol a un empleado por su ID.
      * @param id Es el numero identificador del empleado que se desea eliminar.
      */
-    void eliminar(int id) {
+    void eliminar(String id) {
         raíz = eliminarRec(raíz, id);
     }
 
@@ -67,13 +67,13 @@ public class ArbolBinario {
      * @param id Es el numero identificador del empleado que se esta buscando.
      * @return Es el nuevo nodo después de eliminar el ID.
      */
-    private Nodo eliminarRec(Nodo nodo, int id) {
+    private Nodo eliminarRec(Nodo nodo, String id) {
         if (nodo == null) {
             return null;
         }
-        if (id < nodo.id) {
+        if (id.compareTo(nodo.id) < 0) {
             nodo.izquierda = eliminarRec(nodo.izquierda, id);
-        } else if (id > nodo.id) {
+        } else if (id.compareTo(nodo.id) > 0) {
             nodo.derecha = eliminarRec(nodo.derecha, id);
         } else {
             if (nodo.izquierda == null) {
