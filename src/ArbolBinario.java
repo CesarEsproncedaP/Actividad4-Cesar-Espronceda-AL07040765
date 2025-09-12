@@ -1,20 +1,24 @@
-//Lo que hace esta clase es que con el árbol binario se búbusca a los empleados porsu ID. 
+/**
+ * Clase que implementa un árbol binario para gestionar empleados.
+ */
 public class ArbolBinario {
-    Nodo raíz;
+    private Nodo raiz;
 
     /**
-     * @param id Es el número identificador del empleado, es como una matrícula. 
-     * @param nombre Como se puede inferir, es para el nombre del empleado.
+     * Inserta un nuevo empleado en el árbol binario.
+     * @param id Identificador del empleado.
+     * @param nombre Nombre del empleado.
      */
-    void insertar(String id, String nombre) {
-        raíz = insertarRec(raíz, id, nombre);
+    public void insertar(String id, String nombre) {
+        raiz = insertarRec(raiz, id, nombre);
     }
 
     /**
-     * @param nodo Es el nodo en el que se encuentra.
-     * @param id Es el número identificador del empleado, es como una matrícula. 
-     * @param nombre Es para el nombre del empleado.
-     * @return Nodo nuevo.
+     * Método recursivo para insertar un nodo en el árbol.
+     * @param nodo Nodo actual en la recursión.
+     * @param id Identificador del empleado.
+     * @param nombre Nombre del empleado.
+     * @return Nodo actualizado.
      */
     private Nodo insertarRec(Nodo nodo, String id, String nombre) {
         if (nodo == null) {
@@ -27,25 +31,28 @@ public class ArbolBinario {
         }
         return nodo;
     }
+
     /**
-    * Lo que se hace aquí básicamente es buscar a un empleado por su ID en el árbol.
-    * @param id Es el número identificador del empleado a buscar.
-    * @return Cuando se encuebtra un empleado aparece su nombre, cuando no aparece "No encontrado".
-    */
-    String buscar(String id) {
-        Nodo resultado = buscarRec(raíz, id);
-        return resultado != null ? resultado.nombre : "No encontrado";
+     * Busca un empleado por su ID en el árbol.
+     * @param id Identificador del empleado.
+     * @return Nombre del empleado o "No encontrado" si no existe.
+     */
+    public String buscar(String id) {
+        return buscarRec(raiz, id);
     }
 
     /**
-     * Método  recursivo para buscar un nodo por el ID.
-     * @param nodo Es el nodo actual de la recursión.
-     * @param id Es el numero identificador del empleado que se esta buscando.
-     * @return Da de retorno el nodo encontrado o null en caso de que no se encuentre dicho ID.
+     * Método recursivo para buscar un empleado.
+     * @param nodo Nodo actual en la recursión.
+     * @param id Identificador del empleado.
+     * @return Nombre del empleado o "No encontrado".
      */
-    private Nodo buscarRec(Nodo nodo, String id) {
-        if (nodo == null || nodo.id.equals(id)) {
-            return nodo;
+    private String buscarRec(Nodo nodo, String id) {
+        if (nodo == null) {
+            return "No encontrado";
+        }
+        if (id.equals(nodo.id)) {
+            return nodo.nombre;
         }
         if (id.compareTo(nodo.id) < 0) {
             return buscarRec(nodo.izquierda, id);
@@ -54,18 +61,51 @@ public class ArbolBinario {
     }
 
     /**
-     * Elimina del árbol a un empleado por su ID.
-     * @param id Es el numero identificador del empleado que se desea eliminar.
+     * Verifica si un ID existe en el árbol.
+     * @param id Identificador del empleado.
+     * @return true si el ID existe, false si no.
      */
-    void eliminar(String id) {
-        raíz = eliminarRec(raíz, id);
+    private boolean existe(String id) {
+        return existeRec(raiz, id);
     }
 
     /**
-     * Método recursivo para eliminar un nodo por el ID.
-     * @param nodo Es el nodo actual de la recursión.
-     * @param id Es el numero identificador del empleado que se esta buscando.
-     * @return Es el nuevo nodo después de eliminar el ID.
+     * Método recursivo para verificar si un ID existe.
+     * @param nodo Nodo actual en la recursión.
+     * @param id Identificador del empleado.
+     * @return true si el ID existe, false si no.
+     */
+    private boolean existeRec(Nodo nodo, String id) {
+        if (nodo == null) {
+            return false;
+        }
+        if (id.equals(nodo.id)) {
+            return true;
+        }
+        if (id.compareTo(nodo.id) < 0) {
+            return existeRec(nodo.izquierda, id);
+        }
+        return existeRec(nodo.derecha, id);
+    }
+
+    /**
+     * Elimina un empleado por su ID.
+     * @param id Identificador del empleado.
+     * @return true si el empleado fue eliminado, false si no se encontró.
+     */
+    public boolean eliminar(String id) {
+        if (!existe(id)) {
+            return false;
+        }
+        raiz = eliminarRec(raiz, id);
+        return true;
+    }
+
+    /**
+     * Método recursivo para eliminar un nodo.
+     * @param nodo Nodo actual en la recursión.
+     * @param id Identificador del empleado.
+     * @return Nodo actualizado.
      */
     private Nodo eliminarRec(Nodo nodo, String id) {
         if (nodo == null) {
@@ -81,80 +121,86 @@ public class ArbolBinario {
             } else if (nodo.derecha == null) {
                 return nodo.izquierda;
             }
-            Nodo mínimo = encontrarMínimo(nodo.derecha);
-            nodo.id = mínimo.id;
-            nodo.nombre = mínimo.nombre;
-            nodo.derecha = eliminarRec(nodo.derecha, mínimo.id);
+            Nodo sucesor = encontrarMin(nodo.derecha);
+            nodo.id = sucesor.id;
+            nodo.nombre = sucesor.nombre;
+            nodo.derecha = eliminarRec(nodo.derecha, sucesor.id);
         }
         return nodo;
     }
 
     /**
-     * Encuentra el nodo con el ID mínimo en un subárbol.
-     * @param nodo Raíz del subárbol donde buscar.
+     * Encuentra el nodo con el ID mínimo.
+     * @param nodo Nodo actual.
      * @return Nodo con el ID mínimo.
      */
-    private Nodo encontrarMínimo(Nodo nodo) {
+    private Nodo encontrarMin(Nodo nodo) {
         while (nodo.izquierda != null) {
             nodo = nodo.izquierda;
         }
         return nodo;
     }
 
-    //Realiza un recorrido preorden del árbol (raíz, izquierda, derecha).
-    void preorden() {
-        System.out.print("Preorden: ");
-        preordenRec(raíz);
+    /**
+     * Imprime el árbol en recorrido preorden.
+     */
+    public void preorden() {
+        System.out.println("Recorrido Preorden:");
+        preordenRec(raiz);
         System.out.println();
     }
 
     /**
-     * Método recursivo para el recorrido preorden.
-     * @param nodo Nodo actual en la recursión.
+     * Método recursivo para recorrido preorden.
+     * @param nodo Nodo actual.
      */
     private void preordenRec(Nodo nodo) {
         if (nodo != null) {
-            System.out.print("[" + nodo.id + ": " + nodo.nombre + "] ");
+            System.out.println("[" + nodo.id + ": " + nodo.nombre + "]");
             preordenRec(nodo.izquierda);
             preordenRec(nodo.derecha);
         }
     }
 
-    //Realiza un recorrido inorden del árbol (izquierda, raíz, derecha).
-    void inorden() {
-        System.out.print("Inorden: ");
-        inordenRec(raíz);
+    /**
+     * Imprime el árbol en recorrido inorden.
+     */
+    public void inorden() {
+        System.out.println("Recorrido Inorden:");
+        inordenRec(raiz);
         System.out.println();
     }
 
     /**
-     * Método recursivo para el recorrido inorden.
-     * @param nodo Nodo actual en la recursión.
+     * Método recursivo para recorrido inorden.
+     * @param nodo Nodo actual.
      */
     private void inordenRec(Nodo nodo) {
         if (nodo != null) {
             inordenRec(nodo.izquierda);
-            System.out.print("[" + nodo.id + ": " + nodo.nombre + "] ");
+            System.out.println("[" + nodo.id + ": " + nodo.nombre + "]");
             inordenRec(nodo.derecha);
         }
     }
 
-    //Realiza un recorrido postorden del árbol (izquierda, derecha, raíz).
-    void postorden() {
-        System.out.print("Postorden: ");
-        postordenRec(raíz);
+    /**
+     * Imprime el árbol en recorrido postorden.
+     */
+    public void postorden() {
+        System.out.println("Recorrido Postorden:");
+        postordenRec(raiz);
         System.out.println();
     }
 
     /**
-     * Método recursivo para el recorrido postorden.
-     * @param nodo Nodo actual en la recursión.
+     * Método recursivo para recorrido postorden.
+     * @param nodo Nodo actual.
      */
     private void postordenRec(Nodo nodo) {
         if (nodo != null) {
             postordenRec(nodo.izquierda);
             postordenRec(nodo.derecha);
-            System.out.print("[" + nodo.id + ": " + nodo.nombre + "] ");
+            System.out.println("[" + nodo.id + ": " + nodo.nombre + "]");
         }
     }
 }
